@@ -1,11 +1,11 @@
-import { useCallback } from 'react';
-import styles from './App.module.css';
-
 const MODE_LIST = [
   { width: 1920, height: 1080, frameRate: 30 },
   // MS2109 may output 25FPS when connected to a USB hub
   { width: 1920, height: 1080, frameRate: 25 },
 ];
+
+const videoElement = document.body.querySelector("video");
+start().then();
 
 async function requestMediaDevicePermission() {
   // request any media device to trigger the permission popup
@@ -20,7 +20,7 @@ async function requestMediaDevicePermission() {
   }
 }
 
-function findDevice(devices: MediaDeviceInfo[], type: 'videoinput' | 'audioinput', vid: string, pid: string): MediaDeviceInfo | undefined {
+function findDevice(devices, type, vid, pid) {
   // Spec doesn't define how to find a device with specified VID/PID
   // Chrome appends (vid:pid) to the device label
   // TODO: make sure it works on Firefox/Safari
@@ -31,9 +31,7 @@ function findDevice(devices: MediaDeviceInfo[], type: 'videoinput' | 'audioinput
   );
 }
 
-function App() {
-  const handleVideoRef = useCallback(async (videoElement: HTMLVideoElement | null) => {
-    if (videoElement) {
+async function start() {
       // Only `getUserMedia` triggers the permission popup, `enumerateDevices` won't
       await requestMediaDevicePermission();
 
@@ -49,7 +47,7 @@ function App() {
         try {
           const videoStream = await window.navigator.mediaDevices.getUserMedia({
             video: {
-              deviceId: { exact: videoDevice!.deviceId },
+              deviceId: { exact: videoDevice.deviceId },
               width: { exact: mode.width },
               height: { exact: mode.height },
               frameRate: { exact: mode.frameRate },
@@ -59,7 +57,7 @@ function App() {
 
           const audioStream = await window.navigator.mediaDevices.getUserMedia({
             audio: {
-              groupId: { exact: audioDevice!.groupId },
+              groupId: { exact: audioDevice.groupId },
               sampleRate: 96_000,
               sampleSize: 16,
             },
@@ -106,12 +104,4 @@ function App() {
           // ignore
         }
       }
-    }
-  }, []);
-
-  return (
-    <video className={styles.video} ref={handleVideoRef} autoPlay />
-  );
 }
-
-export default App;

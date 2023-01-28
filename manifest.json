@@ -1,0 +1,20 @@
+{
+  "short_name": "MS2109",
+  "name": "MS2109 Web Player",
+  "icons": [
+    {
+      "src": "ms2109-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "ms2109.png",
+      "type": "image/png",
+      "sizes": "230x230"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
