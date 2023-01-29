@@ -104,6 +104,20 @@ async function start() {
             });
             source.connect(processor);
             processor.connect(context.destination);
+
+            // fullscreen mode
+            document.addEventListener("keydown", function (e) {
+                if (e.key === "f") {
+                    if (!document.fullscreenElement) {
+                        videoElement.requestFullscreen();
+                    } else {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        }
+                    }
+                }
+            }, false);
+
             break;
         } catch (e) {
             console.error(e);

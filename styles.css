@@ -7,3 +7,9 @@ html, body, #root, video {
     width: 100%;
     margin: 0;
 }
+
+/* Disable video controls in fullscreen */
+/*noinspection CssInvalidPseudoSelector*/
+video::-webkit-media-controls {
+    display:none !important;
+}
