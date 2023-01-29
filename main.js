@@ -1,4 +1,10 @@
 const MODE_LIST = [
+  // todo: re-evaluate mode list
+  // 720p is clearer than 1080p and allows for 60fps video
+  { width: 1280, height: 720, frameRate: 60 },
+  { width: 1280, height: 720, frameRate: 30 },
+
+  // Fall back to 1080p
   { width: 1920, height: 1080, frameRate: 30 },
   // MS2109 may output 25FPS when connected to a USB hub
   { width: 1920, height: 1080, frameRate: 25 },
