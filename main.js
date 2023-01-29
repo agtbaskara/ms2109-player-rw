@@ -11,6 +11,9 @@ const MODE_LIST = [
     {width: 1280, height: 720, frameRate: 30}
 ];
 
+const AUDIO_META = {vid: '534d', pid: '2109', name: 'USB Digital Audio'};
+const VIDEO_META = {vid: '534d', pid: '2109', name: 'USB Video'};
+
 const videoElement = document.body.querySelector("video");
 start().then();
 
@@ -27,15 +30,21 @@ async function requestMediaDevicePermission() {
     }
 }
 
-function findDevice(devices, type, vid, pid) {
+function findDevice(devices, type, meta) {
     // Spec doesn't define how to find a device with specified VID/PID
     // Chrome appends (vid:pid) to the device label
-    // TODO: make sure it works on Firefox/Safari
-    return devices.find(
+    let device = devices.find(
         x =>
             x.kind === type &&
-            x.label.endsWith(`(${vid.toLowerCase()}:${pid.toLowerCase()})`)
-    );
+            x.label.endsWith(`(${meta.vid.toLowerCase()}:${meta.pid.toLowerCase()})`));
+    // look for friendly name if VID/PID not found
+    if (device == null) {
+        device = devices.find(
+            x =>
+                x.kind === type &&
+                x.label.includes(meta.name));
+    }
+    return device;
 }
 
 async function start() {
@@ -45,8 +54,8 @@ async function start() {
     // TODO: handle permission rejected
 
     const devices = await window.navigator.mediaDevices.enumerateDevices();
-    const videoDevice = findDevice(devices, 'videoinput', '534d', '2109');
-    const audioDevice = findDevice(devices, 'audioinput', '534d', '2109');
+    const videoDevice = findDevice(devices, 'videoinput', VIDEO_META);
+    const audioDevice = findDevice(devices, 'audioinput', AUDIO_META);
 
     // TODO: handle device not found
 
@@ -62,9 +71,10 @@ async function start() {
             });
             videoElement.srcObject = videoStream;
 
+            // TODO: Warn about Firefox/Safari incompatibility
             const audioStream = await window.navigator.mediaDevices.getUserMedia({
                 audio: {
-                    groupId: {exact: audioDevice.groupId},
+                    deviceId: {exact: audioDevice.deviceId},
                     sampleRate: 96_000,
                     sampleSize: 16,
                 },
@@ -108,7 +118,7 @@ async function start() {
 
             // fullscreen mode
             document.addEventListener("keydown", function (e) {
-                if (e.key === "f") {
+                if (e.key === 'f') {
                     if (!document.fullscreenElement) {
                         videoElement.requestFullscreen();
                     } else {
