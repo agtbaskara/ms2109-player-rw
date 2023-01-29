@@ -1,13 +1,14 @@
 const MODE_LIST = [
     // todo: re-evaluate mode list
-    // 720p is clearer than 1080p and allows for 60fps video
+    // 720p output isn't as clear as 1080p output, but the difference is small enough
+    // to make prioritizing smoothness the more logical choice
     {width: 1280, height: 720, frameRate: 60},
-    {width: 1280, height: 720, frameRate: 30},
 
-    // Fall back to 1080p
+    // Fallbacks
     {width: 1920, height: 1080, frameRate: 30},
     // MS2109 may output 25FPS when connected to a USB hub
     {width: 1920, height: 1080, frameRate: 25},
+    {width: 1280, height: 720, frameRate: 30}
 ];
 
 const videoElement = document.body.querySelector("video");
